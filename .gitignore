@@ -1,0 +1,10 @@
+.idea/
+out/
+*.class
+src/com/company/Coco.jar
+src/com/company/Parser.frame
+src/com/company/Parser.java
+src/com/company/Parser.java.old
+src/com/company/Scanner.frame
+src/com/company/Scanner.java
+src/com/company/Scanner.java.old

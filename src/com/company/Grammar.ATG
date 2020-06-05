@@ -1,0 +1,51 @@
+package com.company;
+import com.company.Calculator;
+
+COMPILER Calculator
+
+Calculator calculator;
+
+
+/*---------------------------------------------------*/
+CHARACTERS
+   digit = '0' .. '9'.
+   cr  = '\r'.
+   lf  = '\n'.
+   ht  = '\t'.
+   plus='+'.
+   minus='-'.
+   multiple='*'.
+   division='/'.
+   invalid= ANY-digit-plus-minus-multiple-division.
+
+TOKENS
+    ident=[plus minus] digit {digit}|[plus minus] digit {digit} '.' {digit}.
+    action=plus |minus |multiple |division.
+
+COMMENTS FROM "/*" TO "*/"
+COMMENTS FROM "//" TO lf
+
+
+IGNORE cr + lf + ht
+
+PRODUCTIONS
+Calculator  (.double x;.)
+ = Expression<out x> (.calculator.showResult(x);.).
+
+Expression<out double ret> (.double n1; double n2; String s;.)
+= Ident<out n1>
+ Operation<out s>
+ Ident<out n2> (. if(s.equals("+")) ret=n1+n2;
+                else if(s.equals("-")) ret=n1-n2;
+               else if(s.equals("/")) ret=n1/n2;
+               else if(s.equals("*")) ret=n1*n2;
+                else ret=0;.).
+
+ Ident<out double n>
+ =ident   (. n = Double.valueOf(t.val);.).
+
+ Operation<out String s>
+ = action (.s=t.val;.).
+
+
+END Calculator.

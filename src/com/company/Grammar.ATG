@@ -16,7 +16,6 @@ CHARACTERS
    minus='-'.
    multiple='*'.
    division='/'.
-   invalid= ANY-digit-plus-minus-multiple-division.
 
 TOKENS
     ident=(([plus]|[minus])digit {digit}|([plus]|[minus])digit {digit} '.' {digit}).
@@ -28,32 +27,34 @@ TOKENS
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO lf
 
-
 IGNORE cr + lf + ht
 
 PRODUCTIONS
 Calculator  (.double buff=0.0;.)
  =
- ["("]
+ (
  Expression<out double x> (.buff+=x;.)
+ |
+ (
+ ParenthesisExpression<out double y> (.buff+=y;.)
  {
- ")"
   Operation<out String s>
-  "("
- Expression<out double x1>  (.if(s==null) buff=buff*x1;
-                         else if(s.equals("+")) buff+=+x1;
-                                        else if(s.equals("-")) buff-=x1;
-                                       else if(s.equals("/")) buff=buff/x1;
-                                       else if(s.equals("*")) buff=buff*x1;
-                                       else buff=buff*x1;
-                                            .)
- ")"
- }                  (.calculator.showResult(buff);.)
+  ParenthesisExpression<out double y1> (.if(s==null) buff=buff*y1;
+                                                                  else if(s.equals("+")) buff+=+y1;
+                                                                                 else if(s.equals("-")) buff-=y1;
+                                                                                else if(s.equals("/")) buff=buff/y1;
+                                                                                else if(s.equals("*")) buff=buff*y1;
+                                                                                else buff=buff*y1;
+                                                                                     .)
+
+ }
+ )
+ )   (.calculator.showResult(buff);.)
  .
 
-ParenthesisExpression
+ParenthesisExpression<out double ret>
 ="("
- Expression<out double x> (.buff+=x;.)
+ Expression<out double x> (.ret=x;.)
  ")"
 .
 

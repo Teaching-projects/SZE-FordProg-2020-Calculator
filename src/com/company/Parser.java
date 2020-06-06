@@ -91,25 +91,24 @@ public class Parser {
 	
 	void Calculator() {
 		double buff=0.0;
-		if (la.kind == 6) {
-			Get();
-		}
-		double x = Expression();
-		buff+=x;
-		while (la.kind == 7) {
-			Get();
-			String s = Operation();
-			Expect(6);
-			double x1 = Expression();
-			if(s==null) buff=buff*x1;
-			else if(s.equals("+")) buff+=+x1;
-			         else if(s.equals("-")) buff-=x1;
-			        else if(s.equals("/")) buff=buff/x1;
-			        else if(s.equals("*")) buff=buff*x1;
-			        else buff=buff*x1;
-			             
-			Expect(7);
-		}
+		if (la.kind == 1 || la.kind == 4 || la.kind == 5) {
+			double x = Expression();
+			buff+=x;
+		} else if (la.kind == 6) {
+			double y = ParenthesisExpression();
+			buff+=y;
+			while (la.kind == 2 || la.kind == 3 || la.kind == 6) {
+				String s = Operation();
+				double y1 = ParenthesisExpression();
+				if(s==null) buff=buff*y1;
+				                        else if(s.equals("+")) buff+=+y1;
+				                                       else if(s.equals("-")) buff-=y1;
+				                                      else if(s.equals("/")) buff=buff/y1;
+				                                      else if(s.equals("*")) buff=buff*y1;
+				                                      else buff=buff*y1;
+				                                           
+			}
+		} else SynErr(9);
 		calculator.showResult(buff);
 	}
 
@@ -132,7 +131,16 @@ public class Parser {
 		} else if (la.kind == 5) {
 			Get();
 			ret=calculator.getAns();
-		} else SynErr(9);
+		} else SynErr(10);
+		return ret;
+	}
+
+	double  ParenthesisExpression() {
+		double  ret;
+		Expect(6);
+		double x = Expression();
+		ret=x;
+		Expect(7);
 		return ret;
 	}
 
@@ -158,7 +166,7 @@ public class Parser {
 		} else if (la.kind == 4) {
 			Get();
 			n = calculator.getAns();
-		} else SynErr(10);
+		} else SynErr(11);
 		return n;
 	}
 
@@ -209,8 +217,9 @@ class Errors {
 			case 6: s = "\"(\" expected"; break;
 			case 7: s = "\")\" expected"; break;
 			case 8: s = "??? expected"; break;
-			case 9: s = "invalid Expression"; break;
-			case 10: s = "invalid Ident"; break;
+			case 9: s = "invalid Calculator"; break;
+			case 10: s = "invalid Expression"; break;
+			case 11: s = "invalid Ident"; break;
 			default: s = "error " + n; break;
 		}
 		printMsg(line, col, s);

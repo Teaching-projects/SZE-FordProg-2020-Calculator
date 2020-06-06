@@ -31,17 +31,20 @@ IGNORE cr + lf + ht
 
 PRODUCTIONS
 Calculator  (.double x;.)
- = Expression<out x> (.calculator.showResult(x);.).
+ =
+ Expression<out x> (.calculator.showResult(x);.).
 
 Expression<out double ret> (.double n1; double n2; String s=null;.)
-= Ident<out n1>
+= Ident<out n1> (.ret=n1;.)
+{
  Operation<out s>
  Ident<out n2> (. if(s==null) ret=n1+n2;
-                   else if(s.equals("+")) ret=n1+n2;
-                else if(s.equals("-")) ret=n1-n2;
-               else if(s.equals("/")) ret=n1/n2;
-               else if(s.equals("*")) ret=n1*n2;
-                else ret=n1+n2;.).
+                   else if(s.equals("+")) ret=ret+n2;
+                else if(s.equals("-")) ret=ret-n2;
+               else if(s.equals("/")) ret=ret/n2;
+               else if(s.equals("*")) ret=ret*n2;
+                else ret=ret+n2;.)
+                }.
 
  Ident<out double n>
  =

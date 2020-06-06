@@ -23,6 +23,7 @@ TOKENS
     pre=plus |minus.
     act= multiple |division.
     ans="ans".
+    ANS="ANS".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO lf
@@ -31,12 +32,34 @@ COMMENTS FROM "//" TO lf
 IGNORE cr + lf + ht
 
 PRODUCTIONS
-Calculator  (.double x;.)
+Calculator  (.double buff=0.0;.)
  =
- Expression<out x> (.calculator.showResult(x);.).
+ ["("]
+ Expression<out double x> (.buff+=x;.)
+ {
+ ")"
+  Operation<out String s>
+  "("
+ Expression<out double x1>  (.if(s==null) buff=buff*x1;
+                         else if(s.equals("+")) buff+=+x1;
+                                        else if(s.equals("-")) buff-=x1;
+                                       else if(s.equals("/")) buff=buff/x1;
+                                       else if(s.equals("*")) buff=buff*x1;
+                                       else buff=buff*x1;
+                                            .)
+ ")"
+ }                  (.calculator.showResult(buff);.)
+ .
 
-Expression<out double ret> (.double n1; double n2; String s=null;.)
-= Ident<out n1> (.ret=n1;.)
+ParenthesisExpression
+="("
+ Expression<out double x> (.buff+=x;.)
+ ")"
+.
+
+Expression<out double ret> (.double n1; double n2; String s=null;ret=0.0;.)
+=
+Ident<out n1> (.ret=n1;.)
 {
  Operation<out s>
  Ident<out n2> (. if(s==null) ret=n1+n2;
@@ -45,7 +68,10 @@ Expression<out double ret> (.double n1; double n2; String s=null;.)
                else if(s.equals("/")) ret=ret/n2;
                else if(s.equals("*")) ret=ret*n2;
                 else ret=ret+n2;.)
-                }.
+                }
+                |
+                ANS (.ret=calculator.getAns();.)
+                .
 
  Ident<out double n>    (.n=0.0;.)
  =

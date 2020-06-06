@@ -251,8 +251,8 @@ class StartStates {
 public class Scanner {
 	static final char EOL = '\n';
 	static final int  eofSym = 0;
-	static final int maxT = 5;
-	static final int noSym = 5;
+	static final int maxT = 8;
+	static final int noSym = 8;
 
 
 	public Buffer buffer; // scanner buffer
@@ -277,12 +277,15 @@ public class Scanner {
 	static {
 		start = new StartStates();
 		literals = new HashMap();
-		for (int i = 48; i <= 57; ++i) start.set(i, 6);
-		for (int i = 43; i <= 43; ++i) start.set(i, 7);
-		for (int i = 45; i <= 45; ++i) start.set(i, 8);
+		for (int i = 48; i <= 57; ++i) start.set(i, 9);
+		for (int i = 43; i <= 43; ++i) start.set(i, 10);
+		for (int i = 45; i <= 45; ++i) start.set(i, 11);
 		for (int i = 42; i <= 42; ++i) start.set(i, 2);
 		for (int i = 47; i <= 47; ++i) start.set(i, 2);
 		start.set(97, 3); 
+		start.set(65, 6); 
+		start.set(40, 12); 
+		start.set(41, 13); 
 		start.set(Buffer.EOF, -1);
 
 	}
@@ -430,18 +433,30 @@ public class Scanner {
 				case 5:
 					{t.kind = 4; break loop;}
 				case 6:
+					if (ch == 'N') {AddCh(); state = 7; break;}
+					else {state = 0; break;}
+				case 7:
+					if (ch == 'S') {AddCh(); state = 8; break;}
+					else {state = 0; break;}
+				case 8:
+					{t.kind = 5; break loop;}
+				case 9:
 					recEnd = pos; recKind = 1;
-					if (ch >= '0' && ch <= '9') {AddCh(); state = 6; break;}
+					if (ch >= '0' && ch <= '9') {AddCh(); state = 9; break;}
 					else if (ch == '.') {AddCh(); state = 1; break;}
 					else {t.kind = 1; break loop;}
-				case 7:
+				case 10:
 					recEnd = pos; recKind = 2;
-					if (ch >= '0' && ch <= '9') {AddCh(); state = 6; break;}
+					if (ch >= '0' && ch <= '9') {AddCh(); state = 9; break;}
 					else {t.kind = 2; break loop;}
-				case 8:
+				case 11:
 					recEnd = pos; recKind = 2;
-					if (ch >= '0' && ch <= '9') {AddCh(); state = 6; break;}
+					if (ch >= '0' && ch <= '9') {AddCh(); state = 9; break;}
 					else {t.kind = 2; break loop;}
+				case 12:
+					{t.kind = 6; break loop;}
+				case 13:
+					{t.kind = 7; break loop;}
 
 			}
 		}

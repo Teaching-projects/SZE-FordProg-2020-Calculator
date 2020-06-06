@@ -11,7 +11,8 @@ public class Parser {
 	public static final int _pre = 2;
 	public static final int _act = 3;
 	public static final int _ans = 4;
-	public static final int maxT = 5;
+	public static final int _ANS = 5;
+	public static final int maxT = 8;
 
 	static final boolean _T = true;
 	static final boolean _x = false;
@@ -89,40 +90,50 @@ public class Parser {
 	}
 	
 	void Calculator() {
-		double x;
-		x = Expression();
-		calculator.showResult(x);
+		double buff=0.0;
+		if (la.kind == 6) {
+			Get();
+		}
+		double x = Expression();
+		buff+=x;
+		while (la.kind == 7) {
+			Get();
+			String s = Operation();
+			Expect(6);
+			double x1 = Expression();
+			if(s==null) buff=buff*x1;
+			else if(s.equals("+")) buff+=+x1;
+			         else if(s.equals("-")) buff-=x1;
+			        else if(s.equals("/")) buff=buff/x1;
+			        else if(s.equals("*")) buff=buff*x1;
+			        else buff=buff*x1;
+			             
+			Expect(7);
+		}
+		calculator.showResult(buff);
 	}
 
 	double  Expression() {
 		double  ret;
-		double n1; double n2; String s=null;
-		n1 = Ident();
-		ret=n1;
-		while (StartOf(1)) {
-			s = Operation();
-			n2 = Ident();
-			if(s==null) ret=n1+n2;
-			else if(s.equals("+")) ret=ret+n2;
-			else if(s.equals("-")) ret=ret-n2;
-			else if(s.equals("/")) ret=ret/n2;
-			else if(s.equals("*")) ret=ret*n2;
-			else ret=ret+n2;
-		}
+		double n1; double n2; String s=null;ret=0.0;
+		if (la.kind == 1 || la.kind == 4) {
+			n1 = Ident();
+			ret=n1;
+			while (StartOf(1)) {
+				s = Operation();
+				n2 = Ident();
+				if(s==null) ret=n1+n2;
+				else if(s.equals("+")) ret=ret+n2;
+				else if(s.equals("-")) ret=ret-n2;
+				else if(s.equals("/")) ret=ret/n2;
+				else if(s.equals("*")) ret=ret*n2;
+				else ret=ret+n2;
+			}
+		} else if (la.kind == 5) {
+			Get();
+			ret=calculator.getAns();
+		} else SynErr(9);
 		return ret;
-	}
-
-	double  Ident() {
-		double  n;
-		n=0.0;
-		if (la.kind == 1) {
-			Get();
-			n = Double.parseDouble(t.val);
-		} else if (la.kind == 4) {
-			Get();
-			n = calculator.getAns();
-		} else SynErr(6);
-		return n;
 	}
 
 	String  Operation() {
@@ -138,6 +149,19 @@ public class Parser {
 		return s;
 	}
 
+	double  Ident() {
+		double  n;
+		n=0.0;
+		if (la.kind == 1) {
+			Get();
+			n = Double.parseDouble(t.val);
+		} else if (la.kind == 4) {
+			Get();
+			n = calculator.getAns();
+		} else SynErr(10);
+		return n;
+	}
+
 
 
 	public void Parse() {
@@ -150,8 +174,8 @@ public class Parser {
 	}
 
 	private static final boolean[][] set = {
-		{_T,_x,_x,_x, _x,_x,_x},
-		{_x,_T,_T,_T, _T,_x,_x}
+		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x},
+		{_x,_T,_T,_T, _T,_x,_x,_x, _x,_x}
 
 	};
 } // end Parser
@@ -181,8 +205,12 @@ class Errors {
 			case 2: s = "pre expected"; break;
 			case 3: s = "act expected"; break;
 			case 4: s = "ans expected"; break;
-			case 5: s = "??? expected"; break;
-			case 6: s = "invalid Ident"; break;
+			case 5: s = "ANS expected"; break;
+			case 6: s = "\"(\" expected"; break;
+			case 7: s = "\")\" expected"; break;
+			case 8: s = "??? expected"; break;
+			case 9: s = "invalid Expression"; break;
+			case 10: s = "invalid Ident"; break;
 			default: s = "error " + n; break;
 		}
 		printMsg(line, col, s);

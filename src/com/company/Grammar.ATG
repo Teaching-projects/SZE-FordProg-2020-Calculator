@@ -22,6 +22,7 @@ TOKENS
     ident=(([plus]|[minus])digit {digit}|([plus]|[minus])digit {digit} '.' {digit}).
     pre=plus |minus.
     act= multiple |division.
+    ans="ans".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO lf
@@ -46,9 +47,11 @@ Expression<out double ret> (.double n1; double n2; String s=null;.)
                 else ret=ret+n2;.)
                 }.
 
- Ident<out double n>
+ Ident<out double n>    (.n=0.0;.)
  =
- ident  (. n = Double.parseDouble(t.val);.).
+ ident (. n = Double.parseDouble(t.val);.)
+ | ans (. n = calculator.getAns();.)
+  .
 
  Operation<out String s>
  = [pre|act]  (.s=t.val;.).

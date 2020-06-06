@@ -10,7 +10,8 @@ public class Parser {
 	public static final int _ident = 1;
 	public static final int _pre = 2;
 	public static final int _act = 3;
-	public static final int maxT = 4;
+	public static final int _ans = 4;
+	public static final int maxT = 5;
 
 	static final boolean _T = true;
 	static final boolean _x = false;
@@ -98,7 +99,7 @@ public class Parser {
 		double n1; double n2; String s=null;
 		n1 = Ident();
 		ret=n1;
-		while (la.kind == 1 || la.kind == 2 || la.kind == 3) {
+		while (StartOf(1)) {
 			s = Operation();
 			n2 = Ident();
 			if(s==null) ret=n1+n2;
@@ -113,8 +114,14 @@ public class Parser {
 
 	double  Ident() {
 		double  n;
-		Expect(1);
-		n = Double.parseDouble(t.val);
+		n=0.0;
+		if (la.kind == 1) {
+			Get();
+			n = Double.parseDouble(t.val);
+		} else if (la.kind == 4) {
+			Get();
+			n = calculator.getAns();
+		} else SynErr(6);
 		return n;
 	}
 
@@ -143,7 +150,8 @@ public class Parser {
 	}
 
 	private static final boolean[][] set = {
-		{_T,_x,_x,_x, _x,_x}
+		{_T,_x,_x,_x, _x,_x,_x},
+		{_x,_T,_T,_T, _T,_x,_x}
 
 	};
 } // end Parser
@@ -172,7 +180,9 @@ class Errors {
 			case 1: s = "ident expected"; break;
 			case 2: s = "pre expected"; break;
 			case 3: s = "act expected"; break;
-			case 4: s = "??? expected"; break;
+			case 4: s = "ans expected"; break;
+			case 5: s = "??? expected"; break;
+			case 6: s = "invalid Ident"; break;
 			default: s = "error " + n; break;
 		}
 		printMsg(line, col, s);

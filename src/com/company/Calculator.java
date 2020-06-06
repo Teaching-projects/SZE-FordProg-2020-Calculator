@@ -1,7 +1,7 @@
 package com.company;
 
 public class Calculator {
-    private double ans;
+    private Double ans;
     public Calculator(){}
 
     public void showResult(double x){
@@ -9,4 +9,7 @@ public class Calculator {
         System.out.println(x);
     }
 
+    public double getAns() {
+       return ans==null?0.0:ans;
+    }
 }

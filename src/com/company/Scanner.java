@@ -251,8 +251,8 @@ class StartStates {
 public class Scanner {
 	static final char EOL = '\n';
 	static final int  eofSym = 0;
-	static final int maxT = 4;
-	static final int noSym = 4;
+	static final int maxT = 5;
+	static final int noSym = 5;
 
 
 	public Buffer buffer; // scanner buffer
@@ -277,11 +277,12 @@ public class Scanner {
 	static {
 		start = new StartStates();
 		literals = new HashMap();
-		for (int i = 48; i <= 57; ++i) start.set(i, 3);
-		for (int i = 43; i <= 43; ++i) start.set(i, 4);
-		for (int i = 45; i <= 45; ++i) start.set(i, 5);
+		for (int i = 48; i <= 57; ++i) start.set(i, 6);
+		for (int i = 43; i <= 43; ++i) start.set(i, 7);
+		for (int i = 45; i <= 45; ++i) start.set(i, 8);
 		for (int i = 42; i <= 42; ++i) start.set(i, 2);
 		for (int i = 47; i <= 47; ++i) start.set(i, 2);
+		start.set(97, 3); 
 		start.set(Buffer.EOF, -1);
 
 	}
@@ -421,17 +422,25 @@ public class Scanner {
 				case 2:
 					{t.kind = 3; break loop;}
 				case 3:
+					if (ch == 'n') {AddCh(); state = 4; break;}
+					else {state = 0; break;}
+				case 4:
+					if (ch == 's') {AddCh(); state = 5; break;}
+					else {state = 0; break;}
+				case 5:
+					{t.kind = 4; break loop;}
+				case 6:
 					recEnd = pos; recKind = 1;
-					if (ch >= '0' && ch <= '9') {AddCh(); state = 3; break;}
+					if (ch >= '0' && ch <= '9') {AddCh(); state = 6; break;}
 					else if (ch == '.') {AddCh(); state = 1; break;}
 					else {t.kind = 1; break loop;}
-				case 4:
+				case 7:
 					recEnd = pos; recKind = 2;
-					if (ch >= '0' && ch <= '9') {AddCh(); state = 3; break;}
+					if (ch >= '0' && ch <= '9') {AddCh(); state = 6; break;}
 					else {t.kind = 2; break loop;}
-				case 5:
+				case 8:
 					recEnd = pos; recKind = 2;
-					if (ch >= '0' && ch <= '9') {AddCh(); state = 3; break;}
+					if (ch >= '0' && ch <= '9') {AddCh(); state = 6; break;}
 					else {t.kind = 2; break loop;}
 
 			}

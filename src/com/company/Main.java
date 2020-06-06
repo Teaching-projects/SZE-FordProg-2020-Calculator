@@ -15,13 +15,17 @@ public class Main {
         System.out.println("Exit: OFF");
         try {
             String s=br.readLine();
+            Scanner scanner = new Scanner(new ByteArrayInputStream(s.getBytes()));
+            Parser parser = new Parser(scanner);
+            parser.calculator=new Calculator();
             while(!"OFF".equals(s)){
-                Scanner scanner = new Scanner(new ByteArrayInputStream(s.getBytes()));
-                Parser parser = new Parser(scanner);
-                parser.calculator=new Calculator();
                 parser.Parse();
                 System.out.println("Next calculation");
                 s=br.readLine();
+                scanner.buffer=new Buffer(new ByteArrayInputStream(s.getBytes()));
+                scanner.Init();
+                parser.scanner=scanner;
+                parser.errors=new Errors();
             }
 
         } catch (IOException e) {

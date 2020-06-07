@@ -1,12 +1,9 @@
-package com.company;
 import com.company.Calculator;
 
 COMPILER Calculator
 
 Calculator calculator;
 
-
-/*---------------------------------------------------*/
 CHARACTERS
    digit = '0' .. '9'.
    cr  = '\r'.
